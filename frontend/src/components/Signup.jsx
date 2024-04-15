@@ -2,6 +2,7 @@ import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import axios from "axios";
 import * as Yup from "yup";
+import { Link } from "react-router-dom";
 
 const SignupSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
@@ -11,6 +12,9 @@ const SignupSchema = Yup.object().shape({
   password: Yup.string()
     .min(6, "Password must be at least 6 characters")
     .required("Password is required"),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("password"), null], "Passwords must match")
+    .required("Confirm password is required"),
 });
 
 const Signup = () => {
@@ -22,13 +26,15 @@ const Signup = () => {
         mobileNumber: "",
         dob: "",
         password: "",
+        confirmPassword: "",
       }}
       validationSchema={SignupSchema}
       onSubmit={async (values, { setSubmitting }) => {
+        const { confirmPassword, ...dataToSubmit } = values; // Extract confirmPassword and prepare dataToSubmit
         try {
           const response = await axios.post(
-            "http://localhost:5000/api/auth/signup",
-            values
+            "https://password-reset-mry2.onrender.com/api/auth/signup",
+            dataToSubmit // Send data excluding confirmPassword
           );
           alert("Signup successful");
           setSubmitting(false);
@@ -40,31 +46,89 @@ const Signup = () => {
       }}
     >
       {({ isSubmitting }) => (
-        <Form>
-          <h1>Sign Up</h1>
-          <label htmlFor="name">Name</label>
-          <Field type="text" name="name" />
-          <ErrorMessage name="name" component="div" />
-
-          <label htmlFor="email">Email</label>
-          <Field type="email" name="email" />
-          <ErrorMessage name="email" component="div" />
-
-          <label htmlFor="mobileNumber">Mobile Number</label>
-          <Field type="text" name="mobileNumber" />
-          <ErrorMessage name="mobileNumber" component="div" />
-
-          <label htmlFor="dob">Date of Birth</label>
-          <Field type="date" name="dob" />
-          <ErrorMessage name="dob" component="div" />
-
-          <label htmlFor="password">Password</label>
-          <Field type="password" name="password" />
-          <ErrorMessage name="password" component="div" />
-
-          <button type="submit" disabled={isSubmitting}>
-            Sign Up
-          </button>
+        <Form className="container">
+          <h1 className="text-center">Sign Up</h1>
+          <div className="row">
+            <div className="form-group row">
+              <label className="form-label" htmlFor="name">
+                Name
+              </label>
+              <Field className="form-control" type="text" name="name" />
+              <ErrorMessage
+                name="name"
+                component="div"
+                className="text-danger"
+              />
+            </div>
+            <div className="form-group row">
+              <label className="form-label" htmlFor="email">
+                Email
+              </label>
+              <Field className="form-control" type="email" name="email" />
+              <ErrorMessage
+                name="email"
+                component="div"
+                className="text-danger"
+              />
+            </div>
+            <div className="form-group row">
+              <label className="form-label" htmlFor="mobileNumber">
+                Mobile Number
+              </label>
+              <Field className="form-control" type="text" name="mobileNumber" />
+              <ErrorMessage
+                name="mobileNumber"
+                component="div"
+                className="text-danger"
+              />
+            </div>
+            <div className="form-group row">
+              <label className="form-label" htmlFor="dob">
+                Date of Birth
+              </label>
+              <Field className="form-control col-4" type="date" name="dob" />
+              <ErrorMessage
+                name="dob"
+                component="div"
+                className="text-danger"
+              />
+            </div>
+            <div className="form-group row">
+              <label className="form-label" htmlFor="password">
+                Password
+              </label>
+              <Field className="form-control" type="password" name="password" />
+              <ErrorMessage
+                name="password"
+                component="div"
+                className="text-danger"
+              />
+            </div>
+            <div className="form-group row">
+              <label className="form-label" htmlFor="confirmPassword">
+                Confirm Password
+              </label>
+              <Field
+                className="form-control"
+                type="password"
+                name="confirmPassword"
+              />
+              <ErrorMessage
+                name="confirmPassword"
+                component="div"
+                className="text-danger"
+              />
+            </div>
+            <Link to="/signin">Already have an account? Sign in</Link>
+            <button
+              type="submit"
+              className="btn btn-primary col-3 mt-4"
+              disabled={isSubmitting}
+              style={{ height: "25%" }}
+            >
+              Sign Up
+            </button>
+          </div>
         </Form>
       )}
     </Formik>

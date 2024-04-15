@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "start": "node --env-file=.env app.js",
+    "start": "node --env-file=.env ./src/app.js",
     "dev": "nodemon --env-file=.env ./src/app.js"
   },
   "keywords": [],
