@@ -1,8 +1,18 @@
 const express = require("express");
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
+const cors = require("cors");
 
 const app = express();
+const corsOptions = {
+  origin: "https://resetformnikhil.netlify.app",
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  allowedHeaders: "Content-Type,Authorization",
+  credentials: true, // Allows cookies and auth headers
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 
 // Connect to database
 connectDB();

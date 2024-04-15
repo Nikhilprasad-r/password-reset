@@ -45,7 +45,7 @@ exports.resetPassword = async (req, res) => {
 
     await sendResetEmail(
       user.email,
-      `http://localhost:${process.env.PORT}/reset/${token.token}`
+      `https://resetformnikhil.netlify.app/reset/${token.token}`
     );
     res.status(200).send("Reset password link sent");
   } catch (err) {
