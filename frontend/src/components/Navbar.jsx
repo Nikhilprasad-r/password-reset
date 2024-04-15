@@ -10,7 +10,7 @@ const Navbar = () => {
 
   return (
     <nav className={`navbar navbar-expand-lg navbar-light bg-white`}>
-      <a className="navbar-brand" href="#">
+      <a className="navbar-brand" href="/">
         Navbar
       </a>
 

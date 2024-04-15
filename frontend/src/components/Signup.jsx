@@ -30,11 +30,11 @@ const Signup = () => {
       }}
       validationSchema={SignupSchema}
       onSubmit={async (values, { setSubmitting }) => {
-        const { confirmPassword, ...dataToSubmit } = values; // Extract confirmPassword and prepare dataToSubmit
+        const { confirmPassword, ...dataToSubmit } = values;
         try {
           const response = await axios.post(
             "https://password-reset-mry2.onrender.com/api/auth/signup",
-            dataToSubmit // Send data excluding confirmPassword
+            dataToSubmit
           );
           alert("Signup successful");
           setSubmitting(false);

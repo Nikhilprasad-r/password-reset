@@ -1,7 +1,7 @@
 import React from "react";
 import { useAuth } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
-
+import img from "../assets/home.jpg";
 const Home = () => {
   const { isAuthenticated } = useAuth();
 
@@ -10,9 +10,10 @@ const Home = () => {
   }
 
   return (
-    <div>
-      <h1>Welcome to the Home Page</h1>
-      {/* More home page content */}
+    <div style={{ backgroundImage: `url(${img})` }}>
+      <div className="container">
+        <h1 className="text-center">Welcome to the Home Page</h1>
+      </div>
     </div>
   );
 };
