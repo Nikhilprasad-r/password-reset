@@ -2,12 +2,11 @@ const nodemailer = require("nodemailer");
 
 exports.sendResetEmail = async (email, link) => {
   const transporter = nodemailer.createTransport({
-    service: "Gmail",
-    host: "smtp.gmail.com",
-    port: 465,
+    host: "smtp.ethereal.email",
+    port: 587,
     auth: {
       user: process.env.EMAIL,
-      pass: process.env.EMAIL_PASSWORD,
+      pass: process.env.PASSWORD,
     },
   });
 
