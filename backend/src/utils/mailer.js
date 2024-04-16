@@ -2,8 +2,8 @@ const nodemailer = require("nodemailer");
 
 exports.sendResetEmail = async (email, link) => {
   const transporter = nodemailer.createTransport({
-    service: "seeuinweb",
-    host: "smtpout.secureserver.net",
+    service: "Gmail",
+    host: "smtp.gmail.com",
     port: 465,
     secure: true,
     auth: {
