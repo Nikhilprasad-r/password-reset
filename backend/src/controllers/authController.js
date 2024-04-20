@@ -1,23 +1,25 @@
 const User = require("../models/User");
 const Token = require("../models/Token");
-const bcrypt = require("bcryptjs");
+const argon2 = require("argon2");
 const { sendResetEmail } = require("../utils/mailer");
 const jwt = require("jsonwebtoken");
 
 exports.signUp = async (req, res) => {
   const { name, email, mobileNumber, dob, password } = req.body;
   try {
-    let user = await User.findOne({ email });
+    let user = await User.findOne({ email: email });
     if (user) {
       return res.status(400).json({ msg: "User already exists" });
     }
+
+    const hashedPassword = await argon2.hash(password);
 
     user = new User({
       name,
       email,
       mobileNumber,
       dob,
-      password: bcrypt.hashSync(password, 10),
+      password: hashedPassword,
     });
 
     await user.save();
@@ -31,7 +33,7 @@ exports.signUp = async (req, res) => {
 exports.resetPassword = async (req, res) => {
   const { email } = req.body;
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: email });
     if (!user) {
       return res.status(404).json({ msg: "User not found" });
     }
@@ -57,7 +59,7 @@ exports.resetPassword = async (req, res) => {
 exports.resetPasswordForm = async (req, res) => {
   const { token } = req.params;
   try {
-    const passwordResetToken = await Token.findOne({ token });
+    const passwordResetToken = await Token.findOne({ token: token });
     if (!passwordResetToken) {
       return res
         .status(400)
@@ -86,7 +88,7 @@ exports.submitNewPassword = async (req, res) => {
     }
 
     const user = await User.findById(passwordResetToken.userId);
-    user.password = bcrypt.hashSync(password, 10);
+    user.password = await argon2.hash(password);
     await user.save();
 
     await Token.findByIdAndRemove(passwordResetToken._id);
@@ -97,15 +99,17 @@ exports.submitNewPassword = async (req, res) => {
     res.status(500).send("Server error");
   }
 };
+
 exports.signIn = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email: email });
+    console.log(user);
     if (!user) {
       return res.status(404).json({ msg: "User not found" });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await argon2.verify(user.password, password);
     if (!isMatch) {
       return res.status(400).json({ msg: "Invalid credentials" });
     }
