@@ -12,6 +12,7 @@ import NewPassword from "./components/NewPassword";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Navbar from "./components/Navbar";
 import SignIn from "./components/SignIn";
+import AccountActivation from "./components/AccountActivation";
 import UrlManager from "./components/UrlManager";
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/" element={<UrlManager />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/activate/:token" element={<AccountActivation />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/reset/:token" element={<NewPassword />} />
         </Routes>
