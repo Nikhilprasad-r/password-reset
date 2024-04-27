@@ -1,17 +1,19 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const {
+import {
   signIn,
   signUp,
   resetPassword,
   resetPasswordForm,
   submitNewPassword,
-} = require("../controllers/authController");
-
+} from "../controllers/authController";
+import { shorten, redirect } from "../controllers/urlControllers";
 router.post("/signup", signUp);
 router.post("/signin", signIn);
 router.post("/reset-password", resetPassword);
 router.get("/reset/:token", resetPasswordForm);
 router.post("/reset/:token", submitNewPassword);
+router.post("/shorten", shorten);
+router.get("/:shortUrl", redirect);
 
 module.exports = router;

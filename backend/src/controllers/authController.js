@@ -1,9 +1,8 @@
-const User = require("../models/User");
-const Token = require("../models/Token");
-const bcrypt = require("bcryptjs");
-const { sendResetEmail } = require("../utils/mailer");
-const jwt = require("jsonwebtoken");
-
+import User from "../models/User";
+import Token from "../models/Token";
+import bcrypt from "bcryptjs";
+import { sendResetEmail } from "../utils/mailer";
+import jwt from "jsonwebtoken";
 exports.signUp = async (req, res) => {
   const { name, email, mobileNumber, dob, password } = req.body;
   try {
