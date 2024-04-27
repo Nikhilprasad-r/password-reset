@@ -8,7 +8,7 @@ const corsOptions = {
   origin: "https://resetformnikhil.netlify.app",
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   allowedHeaders: "Content-Type,Authorization",
-  credentials: true, // Allows cookies and auth headers
+  credentials: true,
   optionsSuccessStatus: 200,
 };
 

@@ -40,7 +40,7 @@ exports.resetPassword = async (req, res) => {
       userId: user._id,
       token: require("crypto").randomBytes(32).toString("hex"),
     });
-
+    console.log(token.token);
     await token.save();
 
     await sendResetEmail(
@@ -77,6 +77,7 @@ exports.resetPasswordForm = async (req, res) => {
 exports.submitNewPassword = async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;
+  console.log(password);
   try {
     const passwordResetToken = await Token.findOne({ token: token });
     if (!passwordResetToken) {
