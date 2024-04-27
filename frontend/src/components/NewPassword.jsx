@@ -7,17 +7,20 @@ import * as Yup from "yup";
 const NewPassword = () => {
   const { token } = useParams();
 
-  const handleSubmit = async (values) => {
+  const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+    setSubmitting(true);
     try {
       const response = await axios.post(
-        `https://password-reset-mry2.onrender.com/api/auth/reset/${token}`,
+        `https://password-reset-mry2.onrender.com/auth/reset/${token}`,
         { password: values.password }
       );
       alert("Password reset successfully");
+      resetForm();
     } catch (error) {
       alert("Failed to reset password");
       console.error(error);
     }
+    setSubmitting(false);
   };
 
   const validationSchema = Yup.object().shape({

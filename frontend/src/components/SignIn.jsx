@@ -17,14 +17,17 @@ const SignIn = () => {
     <Formik
       initialValues={{ email: "", password: "" }}
       validationSchema={SignInSchema}
-      onSubmit={async (values, { setSubmitting }) => {
+      onSubmit={async (values, { setSubmitting, resetForm }) => {
+        setSubmitting(true);
         try {
           const response = await axios.post(
-            "http://password-reset-mry2.onrender.com/api/auth/signin",
+            "http://password-reset-mry2.onrender.com/auth/signin",
             values
           );
           signIn(response.data.token);
           alert("Sign in successful");
+          resetForm();
+          s;
         } catch (error) {
           alert("Failed to sign in");
           console.error(error);

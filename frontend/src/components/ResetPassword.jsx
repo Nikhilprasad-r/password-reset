@@ -14,19 +14,21 @@ const ResetPassword = () => {
         email: "",
       }}
       validationSchema={ResetPasswordSchema}
-      onSubmit={async (values, { setSubmitting }) => {
+      onSubmit={async (values, { setSubmitting, resetForm }) => {
+        setSubmitting(true);
         try {
           const response = await axios.post(
-            "https://password-reset-mry2.onrender.com/api/auth/reset-password",
+            "https://password-reset-mry2.onrender.com/auth/reset-password",
             values
           );
           alert("Check your email for the reset link");
-          setSubmitting(false);
+
+          resetForm();
         } catch (error) {
-          alert("Error sending reset link");
+          alert("Error sending reset link" + error.response.data.msg);
           console.error(error);
-          setSubmitting(false);
         }
+        setSubmitting(false);
       }}
     >
       {({ isSubmitting }) => (

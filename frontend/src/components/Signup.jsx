@@ -29,15 +29,18 @@ const Signup = () => {
         confirmPassword: "",
       }}
       validationSchema={SignupSchema}
-      onSubmit={async (values, { setSubmitting }) => {
+      onSubmit={async (values, { setSubmitting, resetForm }) => {
+        setSubmitting(true);
         const { confirmPassword, ...dataToSubmit } = values;
         try {
           const response = await axios.post(
-            "https://password-reset-mry2.onrender.com/api/auth/signup",
+            "https://password-reset-mry2.onrender.com/auth/signup",
             dataToSubmit
           );
           alert("Signup successful");
+
           setSubmitting(false);
+          resetForm();
         } catch (error) {
           alert("Error during signup");
           console.error(error);

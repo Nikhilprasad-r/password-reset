@@ -24,5 +24,13 @@ exports.redirect = async (req, res) => {
     return res.status(404).send("URL not found");
   }
 };
-
+exports.userUrls = async (req, res) => {
+  try {
+    const urls = await Url.find({ user: req.user.id });
+    res.json(urls);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server error");
+  }
+};
 module.exports = router;
