@@ -3,17 +3,16 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-
+const apiUrl = import.meta.env.VITE_API_URL;
 const NewPassword = () => {
   const { token } = useParams();
 
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     setSubmitting(true);
     try {
-      const response = await axios.post(
-        `https://password-reset-mry2.onrender.com/auth/reset/${token}`,
-        { password: values.password }
-      );
+      const response = await axios.post(`${apiUrl}/auth/reset/${token}`, {
+        password: values.password,
+      });
       alert("Password reset successfully");
       resetForm();
     } catch (error) {

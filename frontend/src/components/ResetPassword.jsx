@@ -2,6 +2,7 @@ import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import axios from "axios";
 import * as Yup from "yup";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const ResetPasswordSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Email is required"),
@@ -18,7 +19,7 @@ const ResetPassword = () => {
         setSubmitting(true);
         try {
           const response = await axios.post(
-            "https://password-reset-mry2.onrender.com/auth/reset-password",
+            `${apiUrl}/auth/reset-password`,
             values
           );
           alert("Check your email for the reset link");

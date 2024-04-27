@@ -11,7 +11,7 @@ const SignInSchema = Yup.object().shape({
 });
 
 const SignIn = () => {
-  const { signIn } = useAuth();
+  const { signIn, apiUrl } = useAuth();
 
   return (
     <Formik
@@ -20,10 +20,7 @@ const SignIn = () => {
       onSubmit={async (values, { setSubmitting, resetForm }) => {
         setSubmitting(true);
         try {
-          const response = await axios.post(
-            "http://password-reset-mry2.onrender.com/auth/signin",
-            values
-          );
+          const response = await axios.post(`${apiUrl}/auth/signin`, values);
           signIn(response.data.token);
           alert("Sign in successful");
           resetForm();

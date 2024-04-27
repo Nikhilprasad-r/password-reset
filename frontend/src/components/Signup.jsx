@@ -3,7 +3,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import axios from "axios";
 import * as Yup from "yup";
 import { Link } from "react-router-dom";
-
+const apiUrl = import.meta.env.VITE_API_URL;
 const SignupSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
   email: Yup.string().email("Invalid email").required("Email is required"),
@@ -34,7 +34,7 @@ const Signup = () => {
         const { confirmPassword, ...dataToSubmit } = values;
         try {
           const response = await axios.post(
-            "https://password-reset-mry2.onrender.com/auth/signup",
+            `${apiUrl}/auth/signup`,
             dataToSubmit
           );
           alert("Signup successful");

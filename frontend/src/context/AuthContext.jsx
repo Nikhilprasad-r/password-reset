@@ -9,6 +9,7 @@ export const AuthProvider = ({ children }) => {
     Boolean(localStorage.getItem("token"))
   );
 
+  const apiUrl = import.meta.env.VITE_API_URL;
   const signIn = (token) => {
     localStorage.setItem("token", token);
     setIsAuthenticated(true);
@@ -27,7 +28,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, signIn, signOut }}>
+    <AuthContext.Provider value={{ isAuthenticated, signIn, signOut, apiUrl }}>
       {children}
     </AuthContext.Provider>
   );

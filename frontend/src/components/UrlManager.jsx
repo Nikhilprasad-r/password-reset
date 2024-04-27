@@ -6,7 +6,7 @@ import { useAuth } from "../context/AuthContext"; // Import useAuth
 import { Navigate } from "react-router-dom"; // For redirection
 
 const UrlManager = () => {
-  const { isAuthenticated, user, authToken } = useAuth(); // Extract user and token
+  const { isAuthenticated, user, authToken, apiUrl } = useAuth(); // Extract user and token
   const [urls, setUrls] = useState([]);
 
   useEffect(() => {
@@ -15,14 +15,11 @@ const UrlManager = () => {
     }
     const fetchUrls = async () => {
       try {
-        const response = await axios.get(
-          `https://password-reset-mry2.onrender.com/api/user-urls`,
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
-        );
+        const response = await axios.get(`${apiUrl}/api/user-urls`, {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
         setUrls(response.data);
       } catch (error) {
         console.error("Failed to fetch URLs", error);
@@ -47,7 +44,7 @@ const UrlManager = () => {
     setSubmitting(true);
     try {
       const response = await axios.post(
-        `https://password-reset-mry2.onrender.com/api/shorten`,
+        `${apiUrl}/api/shorten`,
         {
           longUrl: values.longUrl,
           userId: user.id, // Assuming user object has an id
