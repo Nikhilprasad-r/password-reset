@@ -19,9 +19,8 @@ router.post("/auth/signin", signIn);
 router.post("/auth/reset-password", resetPassword);
 router.get("/auth/reset/:token", resetPasswordForm);
 router.post("/auth/reset/:token", submitNewPassword);
-router.delete("/api/delete/:urlId", auth, deleteUrl);
 router.post("/api/shorten", shorten);
 router.get("/api/:shortUrl", redirect);
 router.get("/api/user-urls", auth, userUrls);
-
+router.delete("/api/delete/:urlId", auth, deleteUrl);
 export default router;
