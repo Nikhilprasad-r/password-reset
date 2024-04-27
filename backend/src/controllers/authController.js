@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import Token from "../models/Token.js";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import { sendResetEmail, sendActivationEmail } from "../utils/mailer.js";
 import jwt from "jsonwebtoken";
 
@@ -25,7 +26,7 @@ export const signUp = async (req, res) => {
 
     const token = new Token({
       userId: user._id,
-      token: require("crypto").randomBytes(32).toString("hex"),
+      token: crypto.randomBytes(32).toString("hex"),
       type: "activation",
     });
     await token.save();
@@ -79,7 +80,7 @@ export const resetPassword = async (req, res) => {
 
     const token = new Token({
       userId: user._id,
-      token: require("crypto").randomBytes(32).toString("hex"),
+      token: crypto.randomBytes(32).toString("hex"),
       type: "reset",
     });
     await token.save();
