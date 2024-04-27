@@ -5,7 +5,7 @@ import Routes from "./routes/Routes.js";
 
 const app = express();
 const corsOptions = {
-  origin: "https://resetformnikhil.netlify.app",
+  origin: process.env.FRONTEND_URL || "http://localhost:3000",
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   allowedHeaders: "Content-Type,Authorization",
   credentials: true,

@@ -3,6 +3,7 @@ import Token from "../models/Token.js";
 import bcrypt from "bcryptjs";
 import { sendResetEmail, sendActivationEmail } from "../utils/mailer.js";
 import jwt from "jsonwebtoken";
+
 export const signUp = async (req, res) => {
   const { name, email, mobileNumber, dob, password } = req.body;
   try {
@@ -21,17 +22,18 @@ export const signUp = async (req, res) => {
     });
 
     await user.save();
+
     const token = new Token({
       userId: user._id,
       token: require("crypto").randomBytes(32).toString("hex"),
-      type: "activation", // Specify the type of token for clarity
+      type: "activation",
     });
     await token.save();
 
-    const activationLink = `https://yourfrontenddomain.com/activate/${token.token}`;
+    const activationLink = `${process.env.FRONTEND_URL}/activate/${token.token}`;
     await sendActivationEmail(email, activationLink);
 
-    res.status(201).send("User registered");
+    res.status(201).send("User registered, activation email sent.");
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");
@@ -41,10 +43,7 @@ export const signUp = async (req, res) => {
 export const activateAccount = async (req, res) => {
   const { token } = req.params;
   try {
-    const activationToken = await Token.findOne({
-      token: token,
-      type: "activation",
-    });
+    const activationToken = await Token.findOne({ token, type: "activation" });
     if (!activationToken) {
       return res
         .status(400)
@@ -58,10 +57,9 @@ export const activateAccount = async (req, res) => {
 
     user.isActive = true;
     await user.save();
+    await Token.findByIdAndRemove(activationToken._id);
 
-    await Token.findByIdAndRemove(activationToken._id); // Clean up token
-
-    res.send("Account activated successfully");
+    res.send("Account activated successfully.");
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");
@@ -71,43 +69,25 @@ export const activateAccount = async (req, res) => {
 export const resetPassword = async (req, res) => {
   const { email } = req.body;
   try {
-    const user = await User.findOne({ email: email });
+    const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({ msg: "User not found" });
     }
 
+    // Remove existing reset tokens
+    await Token.deleteMany({ userId: user._id, type: "reset" });
+
     const token = new Token({
       userId: user._id,
       token: require("crypto").randomBytes(32).toString("hex"),
+      type: "reset",
     });
-    console.log(token.token);
     await token.save();
 
-    await sendResetEmail(
-      user.email,
-      `https://resetformnikhil.netlify.app/reset/${token.token}`
-    );
-    res.status(200).send("Reset password link sent");
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server error");
-  }
-};
+    const resetLink = `${process.env.FRONTEND_URL}/reset/${token.token}`;
+    await sendResetEmail(email, resetLink);
 
-export const resetPasswordForm = async (req, res) => {
-  const { token } = req.params;
-  try {
-    const passwordResetToken = await Token.findOne({ token: token });
-    if (!passwordResetToken) {
-      return res
-        .status(400)
-        .json({ msg: "Invalid or expired password reset token" });
-    }
-
-    res.send(`<form action="/reset/${token}" method="POST">
-                <input type="password" name="password" required />
-                <input type="submit" value="Reset Password" />
-              </form>`);
+    res.status(200).send("Reset password link sent.");
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");
@@ -117,9 +97,8 @@ export const resetPasswordForm = async (req, res) => {
 export const submitNewPassword = async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;
-  console.log(password);
   try {
-    const passwordResetToken = await Token.findOne({ token: token });
+    const passwordResetToken = await Token.findOne({ token, type: "reset" });
     if (!passwordResetToken) {
       return res
         .status(400)
@@ -129,21 +108,21 @@ export const submitNewPassword = async (req, res) => {
     const user = await User.findById(passwordResetToken.userId);
     user.password = bcrypt.hashSync(password, 10);
     await user.save();
-
     await Token.findByIdAndRemove(passwordResetToken._id);
 
-    res.send("Password has been reset");
+    res.send("Password has been reset.");
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");
   }
 };
+
 export const signIn = async (req, res) => {
   const { email, password } = req.body;
   try {
-    const user = await User.findOne({ email: email });
-    if (!user) {
-      return res.status(404).json({ msg: "User not found" });
+    const user = await User.findOne({ email });
+    if (!user || !user.isActive) {
+      return res.status(404).json({ msg: "User not found or not activated" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
