@@ -7,7 +7,7 @@ const oauth2Client = new google.auth.OAuth2(
 );
 oauth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
 
-exports.sendResetEmail = async (email, link) => {
+const sendResetEmail = async (email, link) => {
   try {
     const accessToken = await oauth2Client.getAccessToken();
 
@@ -35,3 +35,5 @@ exports.sendResetEmail = async (email, link) => {
     console.error("Failed to send email:", error);
   }
 };
+
+export default sendResetEmail;

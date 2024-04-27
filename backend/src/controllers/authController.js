@@ -1,9 +1,9 @@
-import User from "../models/User";
-import Token from "../models/Token";
+import User from "../models/User.js";
+import Token from "../models/Token.js";
 import bcrypt from "bcryptjs";
-import { sendResetEmail } from "../utils/mailer";
+import sendResetEmail from "../utils/mailer.js";
 import jwt from "jsonwebtoken";
-exports.signUp = async (req, res) => {
+export const signUp = async (req, res) => {
   const { name, email, mobileNumber, dob, password } = req.body;
   try {
     let user = await User.findOne({ email: email });
@@ -27,7 +27,7 @@ exports.signUp = async (req, res) => {
   }
 };
 
-exports.resetPassword = async (req, res) => {
+export const resetPassword = async (req, res) => {
   const { email } = req.body;
   try {
     const user = await User.findOne({ email: email });
@@ -53,7 +53,7 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
-exports.resetPasswordForm = async (req, res) => {
+export const resetPasswordForm = async (req, res) => {
   const { token } = req.params;
   try {
     const passwordResetToken = await Token.findOne({ token: token });
@@ -73,7 +73,7 @@ exports.resetPasswordForm = async (req, res) => {
   }
 };
 
-exports.submitNewPassword = async (req, res) => {
+export const submitNewPassword = async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;
   console.log(password);
@@ -97,7 +97,7 @@ exports.submitNewPassword = async (req, res) => {
     res.status(500).send("Server error");
   }
 };
-exports.signIn = async (req, res) => {
+export const signIn = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email: email });

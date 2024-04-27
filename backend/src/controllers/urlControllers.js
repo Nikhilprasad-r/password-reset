@@ -1,10 +1,10 @@
 import express from "express";
-import Url from "../models/Url";
-import nanoid from "nanoid";
+import Url from "../models/Url.js";
+import { nanoid } from "nanoid";
 
 const router = express.Router();
 
-exports.shorten = async (req, res) => {
+export const shorten = async (req, res) => {
   const { longUrl, userId } = req.body;
   const shortUrl = nanoid(8);
   try {
@@ -16,7 +16,7 @@ exports.shorten = async (req, res) => {
   }
 };
 
-exports.redirect = async (req, res) => {
+export const redirect = async (req, res) => {
   const url = await Url.findOne({ shortUrl: req.params.shortUrl });
   if (url) {
     return res.redirect(url.longUrl);
@@ -24,7 +24,7 @@ exports.redirect = async (req, res) => {
     return res.status(404).send("URL not found");
   }
 };
-exports.userUrls = async (req, res) => {
+export const userUrls = async (req, res) => {
   try {
     const urls = await Url.find({ user: req.user.id });
     res.json(urls);
@@ -33,4 +33,4 @@ exports.userUrls = async (req, res) => {
     res.status(500).send("Server error");
   }
 };
-module.exports = router;
+export default router;

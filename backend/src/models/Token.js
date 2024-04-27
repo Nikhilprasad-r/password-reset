@@ -5,4 +5,4 @@ const TokenSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now, expires: 3600 }, // expires in 1 hour
 });
 
-module.exports = mongoose.model("Token", TokenSchema);
+export default mongoose.model("Token", TokenSchema);
