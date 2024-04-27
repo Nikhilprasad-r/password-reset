@@ -1,7 +1,7 @@
 import User from "../models/User.js";
 import Token from "../models/Token.js";
 import bcrypt from "bcryptjs";
-import sendResetEmail from "../utils/mailer.js";
+import { sendResetEmail, sendActivationEmail } from "../utils/mailer.js";
 import jwt from "jsonwebtoken";
 export const signUp = async (req, res) => {
   const { name, email, mobileNumber, dob, password } = req.body;
@@ -17,10 +17,51 @@ export const signUp = async (req, res) => {
       mobileNumber,
       dob,
       password: bcrypt.hashSync(password, 10),
+      isActive: false,
     });
 
     await user.save();
+    const token = new Token({
+      userId: user._id,
+      token: require("crypto").randomBytes(32).toString("hex"),
+      type: "activation", // Specify the type of token for clarity
+    });
+    await token.save();
+
+    const activationLink = `https://yourfrontenddomain.com/activate/${token.token}`;
+    await sendActivationEmail(email, activationLink);
+
     res.status(201).send("User registered");
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+};
+
+export const activateAccount = async (req, res) => {
+  const { token } = req.params;
+  try {
+    const activationToken = await Token.findOne({
+      token: token,
+      type: "activation",
+    });
+    if (!activationToken) {
+      return res
+        .status(400)
+        .json({ msg: "Invalid or expired activation token" });
+    }
+
+    const user = await User.findById(activationToken.userId);
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    user.isActive = true;
+    await user.save();
+
+    await Token.findByIdAndRemove(activationToken._id); // Clean up token
+
+    res.send("Account activated successfully");
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");
