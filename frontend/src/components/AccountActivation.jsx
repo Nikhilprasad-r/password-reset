@@ -5,6 +5,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
 
 const AccountActivation = () => {
   const { token } = useParams();
+  console.log("Activation token:", token);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
