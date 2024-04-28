@@ -12,13 +12,32 @@ const UserSchema = new mongoose.Schema({
 
 UserSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
-    this.password = await bcrypt.hash(this.password, 10); // Ensure hashing is awaited correctly
+    try {
+      const originalPassword = this.password;
+      this.password = await bcrypt.hash(this.password, 10);
+      console.log(
+        `Password was hashed successfully: from ${originalPassword} to ${this.password}`
+      );
+    } catch (error) {
+      console.error("Error hashing password:", error);
+      return next(error);
+    }
   }
   next();
 });
 
 UserSchema.methods.comparePassword = async function (candidatePassword) {
-  return bcrypt.compare(candidatePassword, this.password); // Method to compare password for login
+  try {
+    const isMatch = await bcrypt.compare(candidatePassword, this.password);
+    console.log(this.email);
+    console.log(
+      `Password comparison result for ${candidatePassword}: ${isMatch}`
+    );
+    return isMatch;
+  } catch (error) {
+    console.error("Error comparing password:", error);
+    throw new Error("Password comparison failed");
+  }
 };
 
 export default mongoose.model("User", UserSchema);

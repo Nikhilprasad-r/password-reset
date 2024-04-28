@@ -5,6 +5,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
 
 const AccountActivation = () => {
   const { token } = useParams();
+  console.log("Token:", token);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -14,7 +15,7 @@ const AccountActivation = () => {
       try {
         const response = await axios.post(`${apiUrl}/auth/activate/${token}`);
         console.log("Account activated:", response.data);
-        navigate("/login", { replace: true });
+        navigate("/signin", { replace: true });
       } catch (err) {
         console.error(
           "Activation error:",

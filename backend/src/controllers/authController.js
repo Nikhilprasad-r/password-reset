@@ -43,6 +43,8 @@ export const signUp = async (req, res) => {
 
 export const activateAccount = async (req, res) => {
   const { token } = req.params;
+  console.log("Token and activation tried", token);
+
   try {
     const activationToken = await Token.findOne({ token, type: "activation" });
     if (!activationToken) {
@@ -119,15 +121,24 @@ export const submitNewPassword = async (req, res) => {
 
 export const signIn = async (req, res) => {
   const { email, password } = req.body;
+  console.log("Sign in attempt for email:", email);
+
   try {
     const user = await User.findOne({ email });
-    if (!user || !user.isActive) {
-      return res.status(404).json({ msg: "User not found or not activated" });
+    if (!user) {
+      console.error("Sign in failed: User not found for email:", email);
+      return res.status(404).json({ msg: "User not found" });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    if (!user.isActive) {
+      console.error("Sign in failed: User not activated for email:", email);
+      return res.status(403).json({ msg: "User not activated" });
+    }
+
+    const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      return res.status(400).json({ msg: "Invalid credentials" });
+      console.error("Sign in failed: Invalid credentials for email:", email);
+      return res.status(401).json({ msg: "Invalid credentials" });
     }
 
     const payload = {
@@ -141,12 +152,16 @@ export const signIn = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "5h" },
       (err, token) => {
-        if (err) throw err;
+        if (err) {
+          console.error("Error signing the JWT for email:", email, err);
+          throw err;
+        }
+        console.log("Sign in successful for email:", email);
         res.json({ token });
       }
     );
   } catch (err) {
-    console.error(err.message);
+    console.error("Server error during sign in for email:", email, err.message);
     res.status(500).send("Server error");
   }
 };

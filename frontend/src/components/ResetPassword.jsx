@@ -2,6 +2,8 @@ import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import axios from "axios";
 import * as Yup from "yup";
+import { useNavigate } from "react-router-dom";
+
 const apiUrl = import.meta.env.VITE_API_URL;
 
 const ResetPasswordSchema = Yup.object().shape({
@@ -9,6 +11,7 @@ const ResetPasswordSchema = Yup.object().shape({
 });
 
 const ResetPassword = () => {
+  const navigate = useNavigate();
   return (
     <Formik
       initialValues={{
@@ -25,6 +28,7 @@ const ResetPassword = () => {
           alert("Check your email for the reset link");
 
           resetForm();
+          navigate("/signin", { replace: true });
         } catch (error) {
           alert("Error sending reset link" + error.response.data.msg);
           console.error(error);

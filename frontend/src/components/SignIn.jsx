@@ -21,12 +21,13 @@ const SignIn = () => {
         setSubmitting(true);
         try {
           const response = await axios.post(`${apiUrl}/auth/signin`, values);
+          console.log("Sign in response:", response.data);
           signIn(response.data.token);
           alert("Sign in successful");
           resetForm();
           s;
         } catch (error) {
-          alert("Failed to sign in");
+          alert(error.response?.data.msg || "Failed to sign in");
           console.error(error);
         }
         setSubmitting(false);
