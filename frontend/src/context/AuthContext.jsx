@@ -24,10 +24,8 @@ export const AuthProvider = ({ children }) => {
   const signOut = () => {
     localStorage.removeItem("token");
     setIsAuthenticated(false);
-    // Optionally, redirect the user to the login page after sign out
   };
 
-  // Handle token validation or refresh logic
   const validateToken = async (token) => {
     try {
       const response = await fetch(`${apiUrl}/validateToken`, {
@@ -49,7 +47,7 @@ export const AuthProvider = ({ children }) => {
       validateToken(token).then((isValid) => {
         setIsAuthenticated(isValid);
         if (!isValid) {
-          localStorage.removeItem("token"); // Cleanup invalid token
+          localStorage.removeItem("token");
         }
       });
     } else {
