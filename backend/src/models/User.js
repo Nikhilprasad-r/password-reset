@@ -15,9 +15,6 @@ UserSchema.pre("save", async function (next) {
     try {
       const originalPassword = this.password;
       this.password = await bcrypt.hash(this.password, 10);
-      console.log(
-        `Password was hashed successfully: from ${originalPassword} to ${this.password}`
-      );
     } catch (error) {
       console.error("Error hashing password:", error);
       return next(error);
@@ -29,10 +26,7 @@ UserSchema.pre("save", async function (next) {
 UserSchema.methods.comparePassword = async function (candidatePassword) {
   try {
     const isMatch = await bcrypt.compare(candidatePassword, this.password);
-    console.log(this.email);
-    console.log(
-      `Password comparison result for ${candidatePassword}: ${isMatch}`
-    );
+
     return isMatch;
   } catch (error) {
     console.error("Error comparing password:", error);

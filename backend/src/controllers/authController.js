@@ -18,8 +18,7 @@ export const signUp = async (req, res) => {
       email,
       mobileNumber,
       dob,
-      password: bcrypt.hashSync(password, 10),
-      isActive: false,
+      password,
     });
 
     await user.save();
@@ -43,7 +42,6 @@ export const signUp = async (req, res) => {
 
 export const activateAccount = async (req, res) => {
   const { token } = req.params;
-  console.log("Token and activation tried", token);
 
   try {
     const activationToken = await Token.findOne({ token, type: "activation" });
@@ -121,7 +119,6 @@ export const submitNewPassword = async (req, res) => {
 
 export const signIn = async (req, res) => {
   const { email, password } = req.body;
-  console.log("Sign in attempt for email:", email);
 
   try {
     const user = await User.findOne({ email });
@@ -135,8 +132,8 @@ export const signIn = async (req, res) => {
       return res.status(403).json({ msg: "User not activated" });
     }
 
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch) {
+    const isVerified = await user.comparePassword(password);
+    if (!isVerified) {
       console.error("Sign in failed: Invalid credentials for email:", email);
       return res.status(401).json({ msg: "Invalid credentials" });
     }
@@ -156,12 +153,10 @@ export const signIn = async (req, res) => {
           console.error("Error signing the JWT for email:", email, err);
           throw err;
         }
-        console.log("Sign in successful for email:", email);
         res.json({ token });
       }
     );
   } catch (err) {
-    console.error("Server error during sign in for email:", email, err.message);
     res.status(500).send("Server error");
   }
 };

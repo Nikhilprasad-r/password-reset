@@ -4,6 +4,7 @@ import axios from "axios";
 import * as Yup from "yup";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const SignInSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Required"),
@@ -12,7 +13,7 @@ const SignInSchema = Yup.object().shape({
 
 const SignIn = () => {
   const { signIn, apiUrl } = useAuth();
-
+  const navigate = useNavigate();
   return (
     <Formik
       initialValues={{ email: "", password: "" }}
@@ -25,7 +26,7 @@ const SignIn = () => {
           signIn(response.data.token);
           alert("Sign in successful");
           resetForm();
-          s;
+          navigate("/", { replace: true });
         } catch (error) {
           alert(error.response?.data.msg || "Failed to sign in");
           console.error(error);
