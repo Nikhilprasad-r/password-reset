@@ -37,7 +37,9 @@ const Signup = () => {
             `${apiUrl}/auth/signup`,
             dataToSubmit
           );
-          alert("Signup successful");
+          alert(
+            "Signup successful please check your email to activate account."
+          );
 
           setSubmitting(false);
           resetForm();

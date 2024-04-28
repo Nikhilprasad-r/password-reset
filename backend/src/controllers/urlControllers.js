@@ -20,6 +20,8 @@ export const shorten = async (req, res) => {
 export const redirect = async (req, res) => {
   const url = await Url.findOne({ shortUrl: req.params.shortUrl });
   if (url) {
+    url.clicks++;
+    await url.save();
     return res.redirect(url.longUrl);
   } else {
     return res.status(404).send("URL not found");

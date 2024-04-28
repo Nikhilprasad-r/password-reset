@@ -25,6 +25,20 @@ const UrlManager = () => {
       fetchUrls();
     }
   }, [isAuthenticated, user, authToken, apiUrl]);
+
+  const deleteUrl = async (urlId) => {
+    try {
+      await axios.delete(`${apiUrl}/api/urls/${urlId}`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      setUrls(urls.filter((url) => url._id !== urlId));
+    } catch (error) {
+      console.error("Failed to delete the URL", error);
+    }
+  };
+
   if (!isAuthenticated) {
     return <Navigate to="/signin" replace />;
   }
@@ -69,13 +83,36 @@ const UrlManager = () => {
   return (
     <div className="container">
       <h1 className="row d-flex justify-content-center">Your URLs</h1>
-      <ul>
-        {urls.map((url) => (
-          <li key={url._id}>
-            {url.longUrl} - {url.shortUrl}
-          </li>
-        ))}
-      </ul>
+      <table class="table">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">Used times</th>
+            <th scope="col">Long Url</th>
+            <th scope="col">ShortUrl</th>
+            <th scope="col">Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          {urls.map((url) => (
+            <tr key={url._id}>
+              <td>{url.clicks}</td>
+              <td> {url.longUrl}</td>
+              <td> {url.shortUrl}</td>
+              <td>
+                <button onClick={() => deleteUrl(url._id)}>delete</button>
+              </td>
+              {url.longUrl} - {url.shortUrl}
+            </tr>
+          ))}
+          <tr>
+            <th scope="row">1</th>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+          </tr>
+        </tbody>
+      </table>
+      <ul></ul>
       <h2>Create a New Short URL</h2>
       <Formik
         initialValues={initialValues}
