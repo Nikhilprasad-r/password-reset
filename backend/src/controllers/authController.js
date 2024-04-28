@@ -58,7 +58,7 @@ export const activateAccount = async (req, res) => {
 
     user.isActive = true;
     await user.save();
-    await Token.findByIdAndRemove(activationToken._id);
+    await Token.findByIdAndDelete(activationToken._id);
 
     res.send("Account activated successfully.");
   } catch (err) {
@@ -109,8 +109,7 @@ export const submitNewPassword = async (req, res) => {
     const user = await User.findById(passwordResetToken.userId);
     user.password = bcrypt.hashSync(password, 10);
     await user.save();
-    await Token.findByIdAndRemove(passwordResetToken._id);
-
+    await Token.findByIdAndDelete(passwordResetToken._id);
     res.send("Password has been reset.");
   } catch (err) {
     console.error(err.message);
