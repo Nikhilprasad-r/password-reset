@@ -26,8 +26,8 @@ const Navbar = () => {
         <button
           onClick={signOut}
           className={clsx(
-            "btn btn-danger d-none",
-            isAuthenticated && "d-block"
+            "btn btn-danger",
+            isAuthenticated ? "d-block" : "d-none"
           )}
         >
           Signout
