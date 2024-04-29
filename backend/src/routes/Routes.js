@@ -19,6 +19,9 @@ router.post("/auth/signin", signIn);
 router.post("/auth/reset-password", resetPassword);
 router.post("/auth/reset/:token", submitNewPassword);
 router.post("/auth/activate/:token", activateAccount);
+router.get("/auth/validatetoken", auth, (req, res) => {
+  res.status(200).json({ msg: "Token is valid" });
+});
 router.post("/api/shorten", shorten);
 router.get("/api/:shortUrl", redirect);
 router.get("/api/user-urls", auth, userUrls);

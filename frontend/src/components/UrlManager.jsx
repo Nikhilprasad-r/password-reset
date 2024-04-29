@@ -3,11 +3,16 @@ import axios from "axios";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useAuth } from "../context/AuthContext";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 const UrlManager = () => {
   const { isAuthenticated, user, authToken, apiUrl } = useAuth();
   const [urls, setUrls] = useState([]);
-
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/signin", { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
   useEffect(() => {
     if (isAuthenticated && user) {
       const fetchUrls = async () => {
@@ -97,19 +102,12 @@ const UrlManager = () => {
             <tr key={url._id}>
               <td>{url.clicks}</td>
               <td> {url.longUrl}</td>
-              <td> {url.shortUrl}</td>
+              <td> https://resetformnikhil.netlify.app/{url.shortUrl}</td>
               <td>
                 <button onClick={() => deleteUrl(url._id)}>delete</button>
               </td>
-              {url.longUrl} - {url.shortUrl}
             </tr>
           ))}
-          <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
-          </tr>
         </tbody>
       </table>
       <ul></ul>

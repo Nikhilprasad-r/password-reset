@@ -141,6 +141,9 @@ export const signIn = async (req, res) => {
     const payload = {
       user: {
         id: user.id,
+        email: user.email,
+        name: user.name,
+        isActive: user.isActive,
       },
     };
 
@@ -153,7 +156,7 @@ export const signIn = async (req, res) => {
           console.error("Error signing the JWT for email:", email, err);
           throw err;
         }
-        res.json({ token });
+        res.json({ token, user: payload.user });
       }
     );
   } catch (err) {

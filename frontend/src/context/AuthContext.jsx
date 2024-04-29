@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext({
   isAuthenticated: false,
+  user: null,
   signIn: () => {},
   signOut: () => {},
   apiUrl: "",
@@ -13,22 +14,26 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(
     Boolean(localStorage.getItem("token"))
   );
-
+  const [user, setUser] = useState(null);
   const apiUrl = import.meta.env.VITE_API_URL;
 
-  const signIn = (token) => {
+  const signIn = (token, userData) => {
     localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(userData));
     setIsAuthenticated(true);
+    setUser(userData);
   };
 
   const signOut = () => {
-    localStorage.removeItem("token");
+    ocalStorage.removeItem("token");
+    localStorage.removeItem("user");
     setIsAuthenticated(false);
+    setUser(null);
   };
 
   const validateToken = async (token) => {
     try {
-      const response = await fetch(`${apiUrl}/validateToken`, {
+      const response = await fetch(`${apiUrl}/auth/validatetoken`, {
         headers: new Headers({
           Authorization: `Bearer ${token}`,
         }),
@@ -43,6 +48,16 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const userData = JSON.parse(localStorage.getItem("user"));
+    if (token && userData) {
+      setIsAuthenticated(true);
+      setUser(userData);
+      if (!isValid) {
+        localStorage.removeItem("token", "user");
+      }
+    } else {
+      setIsAuthenticated(false);
+    }
     if (token) {
       validateToken(token).then((isValid) => {
         setIsAuthenticated(isValid);
@@ -70,7 +85,9 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, signIn, signOut, apiUrl }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, signIn, user, signOut, apiUrl }}
+    >
       {children}
     </AuthContext.Provider>
   );

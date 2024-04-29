@@ -5,7 +5,6 @@ import { nanoid } from "nanoid";
 const router = express.Router();
 
 export const shorten = async (req, res) => {
-  console.log(req);
   const { longUrl, userId } = req.body;
   const shortUrl = nanoid(8);
   try {

@@ -3,14 +3,15 @@ import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const Navbar = () => {
-  const { isAuthenticated, signOut } = useAuth();
+  const { isAuthenticated, signOut, user } = useAuth();
   const navbarStyle = {
     backgroundColor: isAuthenticated ? "green" : "yellow",
+    color: isAuthenticated ? "white" : "black",
   };
 
   return (
     <nav
-      className={`navbar navbar-expand-lg navbar-light bg-white d-flex justify-content-center `}
+      className={`navbar navbar-expand-lg navbar-light bg-white d-flex justify-content-center`}
     >
       <div className="navbar-nav">
         <Link className="nav-item nav-link active" to="/">
