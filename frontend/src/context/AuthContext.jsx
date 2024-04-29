@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signOut = () => {
-    ocalStorage.removeItem("token");
+    localStorage.removeItem("token");
     localStorage.removeItem("user");
     setIsAuthenticated(false);
     setUser(null);
@@ -49,24 +49,21 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userData = JSON.parse(localStorage.getItem("user"));
-    if (token && userData) {
-      setIsAuthenticated(true);
-      setUser(userData);
-      if (!isValid) {
-        localStorage.removeItem("token", "user");
-      }
-    } else {
-      setIsAuthenticated(false);
-    }
     if (token) {
       validateToken(token).then((isValid) => {
         setIsAuthenticated(isValid);
         if (!isValid) {
           localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          setUser(null);
+        } else {
+          setIsAuthenticated(true);
+          setUser(userData);
         }
       });
     } else {
       setIsAuthenticated(false);
+      setUser(null);
     }
   }, []);
 
@@ -75,6 +72,7 @@ export const AuthProvider = ({ children }) => {
     const syncLogout = (event) => {
       if (event.key === "token" && !event.newValue) {
         setIsAuthenticated(false);
+        setUser(null);
       }
     };
 
