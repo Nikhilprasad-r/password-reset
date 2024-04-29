@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-
+import clsx from "clsx";
 const Navbar = () => {
   const { isAuthenticated, signOut, user } = useAuth();
   const navbarStyle = {
@@ -23,7 +23,13 @@ const Navbar = () => {
         <Link className="nav-item nav-link" to="/reset-password">
           Reset Password
         </Link>
-        <button onClick={signOut} className="btn btn-danger">
+        <button
+          onClick={signOut}
+          className={clsx(
+            "btn btn-danger d-none",
+            isAuthenticated && "d-block"
+          )}
+        >
           Signout
         </button>
       </div>
