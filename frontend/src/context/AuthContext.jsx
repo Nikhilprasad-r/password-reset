@@ -5,7 +5,9 @@ const AuthContext = createContext({
   user: null,
   signIn: () => {},
   signOut: () => {},
+  urls: [],
   apiUrl: "",
+  authtoken: null,
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -15,13 +17,19 @@ export const AuthProvider = ({ children }) => {
     Boolean(localStorage.getItem("token"))
   );
   const [user, setUser] = useState(null);
+  const [authToken, setAuthToken] = useState(localStorage.getItem("token"));
+  const [urls, setUrls] = useState(
+    () => JSON.parse(localStorage.getItem("urls")) || []
+  );
   const apiUrl = import.meta.env.VITE_API_URL;
 
   const signIn = (token, userData) => {
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("urls", JSON.stringify(urls));
     setIsAuthenticated(true);
     setUser(userData);
+    setAuthToken(token);
   };
 
   const signOut = () => {
@@ -29,6 +37,8 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("user");
     setIsAuthenticated(false);
     setUser(null);
+    setUrls([]);
+    setAuthToken(null);
   };
 
   const validateToken = async (token) => {
@@ -55,10 +65,12 @@ export const AuthProvider = ({ children }) => {
         if (!isValid) {
           localStorage.removeItem("token");
           localStorage.removeItem("user");
+          localStorage.removeItem("urls");
           setUser(null);
         } else {
           setIsAuthenticated(true);
           setUser(userData);
+          setUrls(JSON.parse(localStorage.getItem("urls")) || []);
         }
       });
     } else {
@@ -71,8 +83,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const syncLogout = (event) => {
       if (event.key === "token" && !event.newValue) {
-        setIsAuthenticated(false);
-        setUser(null);
+        signOut();
       }
     };
 
@@ -84,7 +95,16 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, signIn, user, signOut, apiUrl }}
+      value={{
+        isAuthenticated,
+        signIn,
+        user,
+        signOut,
+        apiUrl,
+        urls,
+        setUrls,
+        authToken,
+      }}
     >
       {children}
     </AuthContext.Provider>

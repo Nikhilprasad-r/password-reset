@@ -22,7 +22,6 @@ const SignIn = () => {
         setSubmitting(true);
         try {
           const response = await axios.post(`${apiUrl}/auth/signin`, values);
-          console.log("Sign in response:", response.data);
           signIn(response.data.token, response.data.user);
           alert("Sign in successful");
           resetForm();
