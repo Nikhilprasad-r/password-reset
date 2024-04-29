@@ -102,7 +102,9 @@ const UrlManager = () => {
             <tr key={url._id}>
               <td>{url.clicks}</td>
               <td> {url.longUrl}</td>
-              <td> https://resetformnikhil.netlify.app/{url.shortUrl}</td>
+              <td>
+                {apiUrl}/{url.shortUrl}
+              </td>
               <td>
                 <button onClick={() => deleteUrl(url._id)}>delete</button>
               </td>
