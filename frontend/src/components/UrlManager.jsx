@@ -88,8 +88,8 @@ const UrlManager = () => {
   return (
     <div className="container">
       <h1 className="row d-flex justify-content-center">Your URLs</h1>
-      <table class="table">
-        <thead class="thead-dark">
+      <table className="table">
+        <thead className="thead-dark">
           <tr>
             <th scope="col">Used times</th>
             <th scope="col">Long Url</th>
